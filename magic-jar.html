@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Jar — Sacred Quotes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --light-green: #7ec897;
+    --light-green-bg: #e8f7ee;
+    --dark-green: #2d6a4f;
+    --dark-green-bg: #d4ede3;
+    --pink: #f48fb1;
+    --pink-bg: #fce4ec;
+    --red: #e05252;
+    --red-bg: #fdecea;
+    --purple: #9b6bbf;
+    --purple-bg: #ede7f6;
+    --yellow: #f5c842;
+    --yellow-bg: #fffde7;
+    --jar-bg: #fdf6ec;
+    --text-dark: #2c1810;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a0e05;
+    min-height: 100vh;
+    font-family: 'Lato', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Starry background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, #2d1b0e 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, #1a0a2e 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, #0d1b0a 0%, transparent 70%),
+      #0a0604;
+    z-index: 0;
+  }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle var(--dur) ease-in-out infinite;
+    opacity: var(--op);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--op); transform: scale(1); }
+    50% { opacity: calc(var(--op) * 0.3); transform: scale(0.5); }
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .header .om {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 10px;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    color: #f0c060;
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px rgba(240,192,96,0.5);
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    color: #c8a87a;
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Jar */
+  .jar-container {
+    position: relative;
+    margin-bottom: 50px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .jar-svg {
+    width: 220px;
+    filter: drop-shadow(0 10px 40px rgba(240,192,96,0.3));
+    transition: transform 0.3s ease;
+  }
+
+  .jar-container:hover .jar-svg {
+    transform: scale(1.04);
+  }
+
+  .chits-inside {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 120px;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .mini-chit {
+    width: 14px; height: 20px;
+    border-radius: 3px;
+    opacity: 0.85;
+    animation: wiggle var(--wdur) ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(var(--start-r)); }
+    50% { transform: rotate(var(--end-r)); }
+  }
+
+  .draw-btn {
+    display: block;
+    margin: 15px auto 0;
+    background: linear-gradient(135deg, #c8860a, #f0c060, #c8860a);
+    color: #1a0e05;
+    border: none;
+    padding: 14px 36px;
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(240,192,96,0.4);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+
+  .draw-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(240,192,96,0.6);
+  }
+
+  .draw-btn:active { transform: scale(0.97); }
+
+  /* Emotion Filters */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 40px;
+    max-width: 700px;
+  }
+
+  .filter-btn {
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: 2px solid transparent;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 1px;
+    background: rgba(255,255,255,0.08);
+    color: #e0cba8;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+
+  .filter-btn[data-emotion="all"] { border-color: #f0c060; }
+  .filter-btn[data-emotion="all"].active, .filter-btn[data-emotion="all"]:hover { background: #f0c060; color: #1a0e05; }
+
+  .filter-btn[data-emotion="calm"] { border-color: var(--light-green); }
+  .filter-btn[data-emotion="calm"].active, .filter-btn[data-emotion="calm"]:hover { background: var(--light-green); color: #fff; }
+
+  .filter-btn[data-emotion="stability"] { border-color: var(--dark-green); }
+  .filter-btn[data-emotion="stability"].active, .filter-btn[data-emotion="stability"]:hover { background: var(--dark-green); color: #fff; }
+
+  .filter-btn[data-emotion="love"] { border-color: var(--pink); }
+  .filter-btn[data-emotion="love"].active, .filter-btn[data-emotion="love"]:hover { background: var(--pink); color: #fff; }
+
+  .filter-btn[data-emotion="anger"] { border-color: var(--red); }
+  .filter-btn[data-emotion="anger"].active, .filter-btn[data-emotion="anger"]:hover { background: var(--red); color: #fff; }
+
+  .filter-btn[data-emotion="anxiety"] { border-color: var(--purple); }
+  .filter-btn[data-emotion="anxiety"].active, .filter-btn[data-emotion="anxiety"]:hover { background: var(--purple); color: #fff; }
+
+  .filter-btn[data-emotion="clarity"] { border-color: var(--yellow); }
+  .filter-btn[data-emotion="clarity"].active, .filter-btn[data-emotion="clarity"]:hover { background: var(--yellow); color: #1a0e05; }
+
+  /* Quote Cards Grid */
+  .quotes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    width: 100%;
+  }
+
+  .chit {
+    border-radius: 12px;
+    padding: 24px 26px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+
+  .chit:hover {
+    transform: translateY(-6px) rotate(-0.5deg);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+  }
+
+  .chit::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  /* Fold effect */
+  .chit::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 28px; height: 28px;
+    background: rgba(0,0,0,0.08);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  }
+
+  /* Emotion-specific styles */
+  .chit[data-emotion="calm"] { background: var(--light-green-bg); }
+  .chit[data-emotion="calm"]::before { background: var(--light-green); }
+
+  .chit[data-emotion="stability"] { background: var(--dark-green-bg); }
+  .chit[data-emotion="stability"]::before { background: var(--dark-green); }
+
+  .chit[data-emotion="love"] { background: var(--pink-bg); }
+  .chit[data-emotion="love"]::before { background: var(--pink); }
+
+  .chit[data-emotion="anger"] { background: var(--red-bg); }
+  .chit[data-emotion="anger"]::before { background: var(--red); }
+
+  .chit[data-emotion="anxiety"] { background: var(--purple-bg); }
+  .chit[data-emotion="anxiety"]::before { background: var(--purple); }
+
+  .chit[data-emotion="clarity"] { background: var(--yellow-bg); }
+  .chit[data-emotion="clarity"]::before { background: var(--yellow); }
+
+  .chit-tag {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .chit[data-emotion="calm"] .chit-tag { color: #2d8a55; }
+  .chit[data-emotion="stability"] .chit-tag { color: var(--dark-green); }
+  .chit[data-emotion="love"] .chit-tag { color: #c2185b; }
+  .chit[data-emotion="anger"] .chit-tag { color: #c62828; }
+  .chit[data-emotion="anxiety"] .chit-tag { color: #6a1b9a; }
+  .chit[data-emotion="clarity"] .chit-tag { color: #b7860a; }
+
+  .chit-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #2c1810;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  .chit-source {
+    font-size: 11px;
+    color: #7a6055;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  /* Modal / Drawn chit */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal-chit {
+    width: min(480px, 90vw);
+    border-radius: 20px;
+    padding: 48px 40px;
+    position: relative;
+    transform: scale(0.7) rotate(-5deg);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    text-align: center;
+  }
+
+  .modal-overlay.show .modal-chit {
+    transform: scale(1) rotate(0deg);
+  }
+
+  .modal-chit::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .modal-chit[data-emotion="calm"] { background: var(--light-green-bg); }
+  .modal-chit[data-emotion="calm"]::before { background: var(--light-green); }
+  .modal-chit[data-emotion="stability"] { background: var(--dark-green-bg); }
+  .modal-chit[data-emotion="stability"]::before { background: var(--dark-green); }
+  .modal-chit[data-emotion="love"] { background: var(--pink-bg); }
+  .modal-chit[data-emotion="love"]::before { background: var(--pink); }
+  .modal-chit[data-emotion="anger"] { background: var(--red-bg); }
+  .modal-chit[data-emotion="anger"]::before { background: var(--red); }
+  .modal-chit[data-emotion="anxiety"] { background: var(--purple-bg); }
+  .modal-chit[data-emotion="anxiety"]::before { background: var(--purple); }
+  .modal-chit[data-emotion="clarity"] { background: var(--yellow-bg); }
+  .modal-chit[data-emotion="clarity"]::before { background: var(--yellow); }
+
+  .modal-emoji { font-size: 48px; margin-bottom: 16px; display: block; }
+
+  .modal-tag {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .modal-chit[data-emotion="calm"] .modal-tag { color: #2d8a55; }
+  .modal-chit[data-emotion="stability"] .modal-tag { color: var(--dark-green); }
+  .modal-chit[data-emotion="love"] .modal-tag { color: #c2185b; }
+  .modal-chit[data-emotion="anger"] .modal-tag { color: #c62828; }
+  .modal-chit[data-emotion="anxiety"] .modal-tag { color: #6a1b9a; }
+  .modal-chit[data-emotion="clarity"] .modal-tag { color: #b7860a; }
+
+  .modal-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 3.5vw, 26px);
+    font-style: italic;
+    line-height: 1.7;
+    color: #2c1810;
+    margin-bottom: 24px;
+  }
+
+  .modal-source {
+    font-size: 12px;
+    color: #7a6055;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  .modal-close {
+    background: rgba(0,0,0,0.12);
+    border: none;
+    padding: 10px 28px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: #5a3e35;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+  }
+
+  .modal-close:hover { background: rgba(0,0,0,0.2); }
+
+  /* Hidden chits */
+  .chit.hidden { display: none; }
+
+  /* Section label */
+  .section-label {
+    width: 100%;
+    max-width: 1100px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #c8a87a;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+  }
+
+  .section-label::before, .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,168,122,0.4), transparent);
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="page">
+  <div class="header">
+    <span class="om">🪔</span>
+    <h1>Magic Jar</h1>
+    <p>Sacred Wisdom · Ancient Scriptures · Eternal Peace</p>
+  </div>
+
+  <!-- JAR SVG -->
+  <div class="jar-container">
+    <svg class="jar-svg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Jar body -->
+      <defs>
+        <linearGradient id="jarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f5e6c8;stop-opacity:0.95"/>
+          <stop offset="50%" style="stop-color:#fdf6ec;stop-opacity:0.98"/>
+          <stop offset="100%" style="stop-color:#e8d5a8;stop-opacity:0.9"/>
+        </linearGradient>
+        <linearGradient id="lidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#c8860a"/>
+          <stop offset="100%" style="stop-color:#f0c060"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Glow ring -->
+      <ellipse cx="100" cy="225" rx="60" ry="12" fill="rgba(240,192,96,0.15)"/>
+      <!-- Jar shadow -->
+      <ellipse cx="100" cy="248" rx="55" ry="8" fill="rgba(0,0,0,0.15)"/>
+      <!-- Jar body -->
+      <path d="M40 90 Q38 240 100 248 Q162 240 160 90 Z" fill="url(#jarGrad)" stroke="#d4b870" stroke-width="1.5"/>
+      <!-- Jar shine -->
+      <path d="M55 110 Q53 190 65 220" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- Neck -->
+      <rect x="55" y="72" width="90" height="22" rx="5" fill="url(#jarGrad)" stroke="#d4b870" stroke-width="1.5"/>
+      <!-- Lid -->
+      <rect x="48" y="58" width="104" height="20" rx="8" fill="url(#lidGrad)" stroke="#a06a08" stroke-width="1"/>
+      <!-- Lid knob -->
+      <rect x="85" y="48" width="30" height="14" rx="6" fill="url(#lidGrad)" stroke="#a06a08" stroke-width="1"/>
+      <!-- Label area -->
+      <rect x="58" y="130" width="84" height="70" rx="8" fill="rgba(240,192,96,0.25)" stroke="rgba(200,160,80,0.5)" stroke-width="1"/>
+      <text x="100" y="155" text-anchor="middle" font-family="serif" font-size="9" fill="#8a6020" letter-spacing="1">✦ MAGIC ✦</text>
+      <text x="100" y="170" text-anchor="middle" font-family="serif" font-size="11" fill="#a07030" font-style="italic">Sacred</text>
+      <text x="100" y="186" text-anchor="middle" font-family="serif" font-size="11" fill="#a07030" font-style="italic">Wisdom</text>
+    </svg>
+
+    <div class="chits-inside" id="chitsInside"></div>
+  </div>
+
+  <button class="draw-btn" onclick="drawRandom()">✨ Draw a Chit ✨</button>
+
+  <!-- Filters -->
+  <div class="filters" style="margin-top:50px;">
+    <button class="filter-btn active" data-emotion="all" onclick="filterQuotes('all', this)">🌟 All</button>
+    <button class="filter-btn" data-emotion="calm" onclick="filterQuotes('calm', this)">🌿 Calmness</button>
+    <button class="filter-btn" data-emotion="stability" onclick="filterQuotes('stability', this)">🌲 Stability</button>
+    <button class="filter-btn" data-emotion="love" onclick="filterQuotes('love', this)">💗 Love</button>
+    <button class="filter-btn" data-emotion="anger" onclick="filterQuotes('anger', this)">🔴 Anger</button>
+    <button class="filter-btn" data-emotion="anxiety" onclick="filterQuotes('anxiety', this)">🔮 Anxiety</button>
+    <button class="filter-btn" data-emotion="clarity" onclick="filterQuotes('clarity', this)">☀️ Clarity</button>
+  </div>
+
+  <div class="section-label" id="sectionLabel">All Sacred Quotes</div>
+
+  <!-- Quotes Grid -->
+  <div class="quotes-grid" id="quotesGrid"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal-chit" id="modalChit">
+    <span class="modal-emoji" id="modalEmoji"></span>
+    <div class="modal-tag" id="modalTag"></div>
+    <p class="modal-quote" id="modalQuote"></p>
+    <p class="modal-source" id="modalSource"></p>
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">Close ✦</button>
+  </div>
+</div>
+
+<script>
+const quotes = [
+  // 🌿 CALMNESS / PEACE — Light Green
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "Let a man lift himself by his own self alone, let him not lower himself; for this self alone is the friend of oneself, and this self alone is the enemy of oneself.", source: "Bhagavad Gita · 6.5", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "He who is not disturbed by the incessant flow of desires — that enter like rivers into the ocean, which is ever being filled but is always still — can alone achieve peace.", source: "Bhagavad Gita · 2.70", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "Sukhasya duhkhasya na ko'pi dātā, paro dadātīti kubuddhi resa — No one gives us happiness or sorrow; what we receive is born only of our own mind.", source: "Mahabharata · Shanti Parva", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "With a serene mind and no fear of anything, controlling the sense organs, one should sit still and meditate on me alone, having me as the supreme goal.", source: "Bhagavad Gita · 6.14", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "When one completely restrains those sense urges, O Arjuna, and fixes consciousness within the Self alone — then one is said to be a person of steady wisdom.", source: "Bhagavad Gita · 2.68", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "Ram naam satya hai — the name of Rama is truth. Hold it in every breath and the turbulence of the world shall not touch your inner sky.", source: "Ramayana · Valmiki · Yuddha Kanda", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "Just as the ocean remains undisturbed even though many rivers enter it, so the wise remain undisturbed even though desires enter them.", source: "Bhagavad Gita · 2.70", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "The tortoise draws its limbs inward at will; so too the wise person withdraws the senses from their objects — their wisdom stands firm.", source: "Bhagavad Gita · 2.58", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "Silence is the ocean in which all the rivers of thought dissolve. Rest there.", source: "Skanda Purana", color: "#7ec897" },
+  { emotion: "calm", emoji: "🌿", label: "Calmness · Peace", quote: "One who is not disturbed in mind, even amidst threefold miseries, or elated when there is happiness, and who is free from attachment, fear and anger, is called a sage of steady mind.", source: "Bhagavad Gita · 2.56", color: "#7ec897" },
+
+  // 🌲 STABILITY / PATIENCE — Dark Green
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "Nāsato vidyate bhāvo nābhāvo vidyate sataḥ — The unreal has no being; the real never ceases to be. Between the two, seers see the truth.", source: "Bhagavad Gita · 2.16", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "The soul is never born nor dies at any time. It has not come into being, does not come into being, and will not come into being. It is unborn, eternal, ever-existing, and primeval.", source: "Bhagavad Gita · 2.20", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "Let right deeds be thy motive, not the fruit which comes from them. And live in the action! Labour! Make thine acts thy piety.", source: "Bhagavad Gita · 2.47", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "As the tree that bends with the storm but roots itself deeper with every wind, so the patient soul grows stronger through every trial.", source: "Vishnu Purana", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "Lord Rama endured fourteen years in the forest with equanimity — neither mourning the throne lost nor thirsting for its return. Such is the steadiness of a great soul.", source: "Ramayana · Ayodhya Kanda", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "Kshama virasyabharanam — Forgiveness is the ornament of the brave. Patience is the foundation on which greatness is built.", source: "Mahabharata · Udyoga Parva", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "One who is not shaken even by the greatest sorrow, and not elated by the greatest joy, that person of stable mind is a true devotee.", source: "Bhagavad Gita · 12.15", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "Just as the sun does not lose its light by rising over a garbage heap, the wise person's equanimity is not disturbed by the impurities of the world.", source: "Bhagavata Purana · 11.7", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "The mountain does not rush; it stands. The river does not doubt; it flows. Be like both — rooted and moving with purpose.", source: "Agni Purana", color: "#2d6a4f" },
+  { emotion: "stability", emoji: "🌲", label: "Stability · Patience", quote: "Dhairya means courage — but deeper than that, it means the steady flame that does not flicker even when the wind howls.", source: "Mahabharata · Shanti Parva", color: "#2d6a4f" },
+
+  // 💗 COMPASSION / LOVE — Pink
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "See the same Self in all beings, and all beings in the Self — this alone is the deepest love, the most fearless compassion.", source: "Bhagavad Gita · 6.29", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "He who sees Me in all things, and all things in Me — I am never lost to him, nor is he lost to Me.", source: "Bhagavad Gita · 6.30", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "Sita's love for Rama was not the love that clings in fear — it was the love that walks into fire and emerges as light.", source: "Ramayana · Sundara Kanda", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "Love all creatures as your own self; in hurting another, you hurt the divine within.", source: "Bhagavata Purana · 7.6", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "Atithi devo bhava — the guest is God. Every being who enters your life is a divine visitor; welcome them with an open heart.", source: "Taittiriya Upanishad", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "The highest dharma is compassion. To relieve another's suffering is to touch the feet of the divine.", source: "Skanda Purana", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "One who is not envious, who is a kind friend to all living beings, who does not think himself a proprietor — he is very dear to Me.", source: "Bhagavad Gita · 12.13", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "Hanuman's devotion to Rama showed the world that love without expectation is the purest form of worship.", source: "Ramayana · Yuddha Kanda", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "To offer love freely, to expect nothing in return — this is the path of the wise and the secret of an unbroken heart.", source: "Bhagavata Purana · 3.29", color: "#f48fb1" },
+  { emotion: "love", emoji: "💗", label: "Compassion · Love", quote: "He who has no ill will to any being, who is friendly and compassionate, free from selfishness — such a devotee is dear to Me.", source: "Bhagavad Gita · 12.13", color: "#f48fb1" },
+
+  // 🔴 ANGER / CONTROL — Red
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "From anger, complete delusion arises, and from delusion bewilderment of memory. When memory is bewildered, intelligence is lost, and when intelligence is lost one falls down again into the material pool.", source: "Bhagavad Gita · 2.63", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "Krodha leads to the loss of all the good one has gained — anger destroys the fruits of a thousand good deeds in a single moment.", source: "Mahabharata · Shanti Parva", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "Triple is the gate of this hell leading to the ruin of the soul — lust, anger and greed. Therefore, one should abandon these three.", source: "Bhagavad Gita · 16.21", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "Kshama (forgiveness) is greater than anger. The one who forgives is stronger than one who retaliates — for it takes more strength to let go than to hold on.", source: "Mahabharata · Udyoga Parva", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "Freedom from anger, freedom from deceit, compassion toward all living beings — these are the divine qualities of one who walks toward the light.", source: "Bhagavad Gita · 16.2–3", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "Lord Rama, even when wronged, did not let anger rule his actions. He paused, breathed, and chose the path of righteousness over the path of rage.", source: "Ramayana · Aranya Kanda", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "The fire of anger burns only the one who carries it. Put it down before it consumes what you love.", source: "Vishnu Purana · 3.7", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "When anger comes, remember: between the provocation and the response lies your freedom. That pause is where wisdom lives.", source: "Bhagavata Purana · 11.23", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "Just as a lamp cannot burn in a storm, the mind cannot see clearly when angry. Calm the storm first; then act.", source: "Skanda Purana", color: "#e05252" },
+  { emotion: "anger", emoji: "🔴", label: "Anger · Control", quote: "He who can conquer his own anger has conquered a greater enemy than any warrior who has won a battlefield.", source: "Mahabharata · Shanti Parva", color: "#e05252" },
+
+  // 🔮 ANXIETY / INNER STRENGTH — Purple
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions. Never consider yourself the cause of the results, and never be attached to not doing your duty.", source: "Bhagavad Gita · 2.47", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "Fear not what is not real; never was and never will be. What is real always was and cannot be destroyed.", source: "Bhagavad Gita · 2.16", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "Sita, separated from Rama, did not break — she sat beneath the Ashoka tree and held the light of his name within her. You too have a light within you that cannot be extinguished.", source: "Ramayana · Sundara Kanda", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "This grief of the unwise! In no real sense is it justified. Your true self weeps not, strains not, dies not.", source: "Bhagavad Gita · 2.11", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "Those who worship Me with devotion, meditating on My transcendental form — I carry what they lack and preserve what they have.", source: "Bhagavad Gita · 9.22", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "When the whole world seems to collapse, remember that the Self within you is made of the same light as the stars — it does not collapse.", source: "Bhagavata Purana · 3.9", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "Cast all your burdens on the Lord; he is capable of bearing them. Your worry adds nothing to His plan.", source: "Mahabharata · Vana Parva", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "Manah eva manushyanam karanam bandha-mokshayoh — The mind alone is the cause of bondage and the cause of liberation. Train it, and fear loses its power.", source: "Amrita Bindu Upanishad", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "The storm does not ask the mountain's permission. But the mountain stands. You have mountains within you.", source: "Skanda Purana", color: "#9b6bbf" },
+  { emotion: "anxiety", emoji: "🔮", label: "Anxiety · Inner Strength", quote: "Tat tvam asi — Thou art That. You are not the small, anxious self you believe yourself to be. You are infinite.", source: "Chandogya Upanishad · 6.8.7", color: "#9b6bbf" },
+
+  // ☀️ CLARITY / POSITIVITY — Yellow
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Uddharedatmanatmanam — Elevate yourself through the power of your own mind. You are your own best friend and your own worst enemy.", source: "Bhagavad Gita · 6.5", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "When a man gives up all varieties of desire for sense gratification and lives free from all such longings — he becomes a person of steady wisdom.", source: "Bhagavad Gita · 2.55", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Tamaso ma jyotirgamaya — Lead me from darkness to light. The journey from confusion to clarity is the most sacred path you will ever walk.", source: "Brihadaranyaka Upanishad · 1.3.28", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Arise! Awake! And stop not till the goal is reached. Every step forward is a victory over yesterday's doubt.", source: "Katha Upanishad · 1.3.14", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Abhayam — Fearlessness is the first divine quality. When you are not afraid, clarity rushes in like sunlight through an open window.", source: "Bhagavad Gita · 16.1", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Shubham karoti kalyanam arogayam dhanasampada — May goodness bring health, wealth and peace. Begin each day with this blessing and your mind is already free.", source: "Traditional Shloka · Diya Prayer", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Wherever there is Krishna, the master of all mystics, and wherever there is Arjuna, the supreme archer, there will also certainly be opulence, victory, extraordinary power, and morality.", source: "Bhagavad Gita · 18.78", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Even a tiny effort toward spiritual awareness rescues one from the greatest fear. Begin where you are — the first step is always enough.", source: "Bhagavad Gita · 2.40", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Like the sun that rises regardless of what happened in the night, every morning is an invitation to begin again with a clear heart.", source: "Vishnu Purana · 2.14", color: "#f5c842" },
+  { emotion: "clarity", emoji: "☀️", label: "Clarity · Positivity", quote: "Aham brahmasmi — I am the infinite. When you know who you truly are, all confusion dissolves, all fear fades, and only clarity remains.", source: "Brihadaranyaka Upanishad · 1.4.10", color: "#f5c842" },
+];
+
+// Generate stars
+const starsContainer = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--op:${(Math.random()*0.6+0.2).toFixed(2)};--dur:${(Math.random()*3+2).toFixed(1)}s;width:${Math.random()<0.2?3:2}px;height:${Math.random()<0.2?3:2}px`;
+  starsContainer.appendChild(s);
+}
+
+// Generate mini chits in jar
+const chitsInside = document.getElementById('chitsInside');
+const colors = ['#7ec897','#2d6a4f','#f48fb1','#e05252','#9b6bbf','#f5c842'];
+for (let i = 0; i < 18; i++) {
+  const c = document.createElement('div');
+  c.className = 'mini-chit';
+  const r1 = (Math.random()*10-5).toFixed(1);
+  const r2 = (Math.random()*10-5).toFixed(1);
+  c.style.cssText = `background:${colors[i%6]};--wdur:${(Math.random()*2+2).toFixed(1)}s;--start-r:${r1}deg;--end-r:${r2}deg`;
+  chitsInside.appendChild(c);
+}
+
+// Render quotes
+function renderQuotes(filter = 'all') {
+  const grid = document.getElementById('quotesGrid');
+  grid.innerHTML = '';
+  const filtered = filter === 'all' ? quotes : quotes.filter(q => q.emotion === filter);
+  filtered.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'chit';
+    card.dataset.emotion = q.emotion;
+    card.innerHTML = `
+      <div class="chit-tag">${q.emoji} ${q.label}</div>
+      <p class="chit-quote">"${q.quote}"</p>
+      <p class="chit-source">— ${q.source}</p>
+    `;
+    card.onclick = () => showModal(q);
+    card.style.animationDelay = `${i * 0.03}s`;
+    grid.appendChild(card);
+  });
+}
+
+renderQuotes();
+
+// Filter
+function filterQuotes(emotion, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const label = document.getElementById('sectionLabel');
+  const labels = { all: 'All Sacred Quotes', calm: 'Calmness & Peace 🌿', stability: 'Stability & Patience 🌲', love: 'Compassion & Love 💗', anger: 'Anger & Control 🔴', anxiety: 'Anxiety & Inner Strength 🔮', clarity: 'Clarity & Positivity ☀️' };
+  label.textContent = labels[emotion];
+  renderQuotes(emotion);
+}
+
+// Draw random
+function drawRandom() {
+  const q = quotes[Math.floor(Math.random() * quotes.length)];
+  showModal(q);
+}
+
+// Modal
+function showModal(q) {
+  const overlay = document.getElementById('modal');
+  const chit = document.getElementById('modalChit');
+  chit.dataset.emotion = q.emotion;
+  document.getElementById('modalEmoji').textContent = q.emoji;
+  document.getElementById('modalTag').textContent = q.label;
+  document.getElementById('modalQuote').textContent = `"${q.quote}"`;
+  document.getElementById('modalSource').textContent = `— ${q.source}`;
+  overlay.classList.add('show');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('show');
+  }
+}
+</script>
+</body>
+</html>
